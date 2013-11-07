@@ -6,36 +6,33 @@ import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class Group implements Runnable {
+public class Group extends NorthPoleConcurrentObject{
 
     private LinkedBlockingQueue<SantasFriend> group;
     int size;
 	final public String type;
     private ArrayList<String> names = new ArrayList<String>();
 
-    Group(int i, String type)
-    {
+    Group(int i, String type){
+        super(type);
         group = new LinkedBlockingQueue<SantasFriend>(i);
         size = i;
 	    this.type = type;
     }
 
-    public void add(SantasFriend friend) throws InterruptedException
-    {
+    public void add(SantasFriend friend) throws InterruptedException{
          names.add(friend.name);
          group.put(friend);
     }
 
-    public int getSize()
-    {
+    public int getSize(){
         return group.size();
     }
 
     public void releaseGroup(CyclicBarrier work) throws InterruptedException, BrokenBarrierException {
 	    Iterator<SantasFriend> groupList = group.iterator();
 	    names.clear();
-        while(groupList.hasNext())
-        {
+        while(groupList.hasNext()){
 	        groupList.next().doneWithSanta();
         }
 	    group.clear();
@@ -47,11 +44,5 @@ public class Group implements Runnable {
         for (String name : names){
             log(name, unitOfWork.name);
         }
-    }
-
-    public void run() {}
-
-    public void log(String n, String s){
-        System.out.println(n + ": "  + s);
     }
 }

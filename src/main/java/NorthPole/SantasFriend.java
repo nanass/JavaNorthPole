@@ -3,50 +3,41 @@ package NorthPole;
 import java.util.Random;
 import java.util.concurrent.SynchronousQueue;
 
-public class SantasFriend implements Runnable {
+public class SantasFriend extends NorthPoleConcurrentObject {
     private Random randomGenerator = new Random();
-    public final String name;
     private final WaitingRoom waitingRoomRef;
 	public final String type;
     SynchronousQueue<Integer> wait = new SynchronousQueue<Integer>();
 
-    SantasFriend (String name, WaitingRoom waitingRoomRef, String type)
-    {
-        this.name = name;
+    SantasFriend (String name, WaitingRoom waitingRoomRef, String type){
+        super(name);
         this.waitingRoomRef = waitingRoomRef;
 	    this.type = type;
     }
 
-    public void withSanta() throws InterruptedException
-    {
+    public void withSanta() throws InterruptedException{
          wait.take();
     }
 
-    public void doneWithSanta() throws InterruptedException
-    {
+    public void doneWithSanta() throws InterruptedException{
         wait.put(1);
     }
 
-	 public void run()
-    {
-        try
-        {
+    @Override
+	public void run(){
+        try{
             Thread.sleep(randomGenerator.nextInt(100) * 200);
         }
         catch (Exception e) {log("Interrupted exception");}
-        while(true)
-        {
-            try
-            {
+        while(true){
+            try{
                 Thread.sleep(randomGenerator.nextInt(100) * 200);
                 log("Working");
-                if (waitingRoomRef.receiveVisitor(this).equals("RoomFull"))
-                {
+                if (waitingRoomRef.receiveVisitor(this).equals("RoomFull")){
                     log("Waiting room is full");
                     Thread.sleep(randomGenerator.nextInt(100) * 200);
                 }
-                else
-                {
+                else{
                     log ("In the waiting room");
                     withSanta();
                     log("Going to work");
@@ -55,8 +46,5 @@ public class SantasFriend implements Runnable {
             }
             catch (InterruptedException e) {log("Interrupted exception");}
         }
-    }
-    public void log(String s){
-        System.out.println(name + ": "  + s);
     }
 }

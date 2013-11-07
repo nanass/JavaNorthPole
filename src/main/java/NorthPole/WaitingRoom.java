@@ -11,51 +11,44 @@ public class WaitingRoom
 	ExecutorService es = Executors.newSingleThreadExecutor();
 	final Santa santaRef;
 
-	public void releaseGroup() throws InterruptedException
-	{
+	public void releaseGroup() throws InterruptedException{
 		isWaiting = false;
 	}
 
-    WaitingRoom(Santa santaRef, int size, String type)
-    {
+    WaitingRoom(Santa santaRef, int size, String type){
         this.santaRef = santaRef;
 	    group = new Group(size, type);
 	    isWaiting = false;
         (new Thread(group)).start();
     }
 
-    public String receiveVisitor(SantasFriend e) throws InterruptedException
-    {
-        if (group.getSize() < group.size && !isWaiting)
-        {
+    public String receiveVisitor(SantasFriend e) throws InterruptedException{
+        if (group.getSize() < group.size && !isWaiting){
             group.add(e);
-            if (group.getSize() == group.size)
-            {
+            if (group.getSize() == group.size){
 	            isWaiting = true;
 				es.submit(new MeetSanta(group, group.type));
             }
             return "Waiting";
         }
-        else
+        else{
             return "RoomFull";
+        }
     }
 
     class MeetSanta implements Runnable
     {
 	    String type;
 	    Group group;
-	    MeetSanta(Group group, String type)
-	    {
+	    MeetSanta(Group group, String type){
 		    this.type = type;
 		    this.group = group;
 	    }
-	    public void run()
-	    {
+	    public void run(){
 		    Boolean found = false;
 		    while(!found)
 		    {
-			    try
-			    {
+			    try{
 				    found = santaRef.wake();
 			    } catch (InterruptedException e){
                     System.out.println("Interrupted exception at WaitingRoom");}

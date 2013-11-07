@@ -2,8 +2,7 @@ package NorthPole;
 
 public class NorthPole
 {
-     public static void main (String[] args)
-     {
+     public static void main (String[] args){
 	    final Santa santa = new Santa();
         final WaitingRoom waitingRoom = new WaitingRoom(santa, 3, "Elf");
 	    final WaitingRoom stable = new WaitingRoom(santa, 9, "Reindeer");
@@ -13,12 +12,10 @@ public class NorthPole
         santa.findWaitingRoom(waitingRoom);
 	    santa.findStable(stable);
 	    (new Thread(santa)).start();
-        for (String name : reindeerNames)
-        {
+        for (String name : reindeerNames){
             (new Thread(new SantasFriend(name, stable, "Reindeer"))).start();
         }
-        for (String name : elfNames)
-        {
+        for (String name : elfNames){
             (new Thread(new SantasFriend("Elf" + name, waitingRoom, "Elf"))).start();
         }
      }
