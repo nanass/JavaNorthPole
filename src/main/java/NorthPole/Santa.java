@@ -9,10 +9,12 @@ public class Santa extends NorthPoleConcurrentObject{
     private WaitingRoom waitingRoom;
 	private WaitingRoom stable;
 	private Boolean isSleeping;
+    private final SnackRoom sr;
 	private final ExecutorService es = Executors.newSingleThreadExecutor();
 
-    public Santa(){
+    public Santa(SnackRoom sr){
         super("Santa");
+        this.sr = sr;
     }
     public void findWaitingRoom(WaitingRoom waitingRoom){
         this.waitingRoom = waitingRoom;
@@ -54,17 +56,34 @@ public class Santa extends NorthPoleConcurrentObject{
     }
 
     public void consultOnRD(Group elves) throws InterruptedException, BrokenBarrierException{
-	    CyclicBarrier work = new CyclicBarrier(2);
-	    isSleeping = false;
+        sr.isWithElves();
+        CyclicBarrier work = new CyclicBarrier(2);
+        isSleeping = false;
         log("Welcoming elves");
-	    es.submit(new UnitOfWork("Entering Santa's house", elves, work));
-	    es.submit(new UnitOfWork("Consulting with Santa", elves, work));
-	    es.submit(new UnitOfWork("Leaving santa's", elves, work));
-	    es.submit(new UnitOfWork("Release", elves, work));
-	    work.await();
+        if(sr.isWaiting()) eatCookies();
+        es.submit(new UnitOfWork("Entering Santa's house", elves, work));
+        if(sr.isWaiting()) eatCookies();
+        log("Consulting with elves");
+        es.submit(new UnitOfWork("Consulting with Santa", elves, work));
+        if(sr.isWaiting()) eatCookies();
         log("Dismissing Elves");
-	    waitingRoom.releaseGroup();
-	    sleep();
+        es.submit(new UnitOfWork("Leaving santa's", elves, work));
+        if(sr.isWaiting()) eatCookies();
+        es.submit(new UnitOfWork("Release", elves, work));
+        if(sr.isWaiting()) eatCookies();
+        work.await();
+        waitingRoom.releaseGroup();
+        sr.doneMeeting();
+        sleep();
+    }
+    private void eatCookies(){
+        try {
+            log("Eating Cookies");
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        sr.doneEating(1);
     }
 
     @Override

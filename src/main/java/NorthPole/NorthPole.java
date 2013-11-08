@@ -6,7 +6,9 @@ public class NorthPole
 {
      public static void main (String[] args){
         NettoServer ns = new NettoServer();
-	    final Santa santa = new Santa();
+        final SnackRoom sr = new SnackRoom();
+	    final Santa santa = new Santa(sr);
+        final MrsClaus mrsClaus = new MrsClaus(sr);
         final WaitingRoom waitingRoom = new WaitingRoom(santa, 3, "Elf");
 	    final WaitingRoom stable = new WaitingRoom(santa, 9, "Reindeer");
         final String[] reindeerNames = { "Dasher","Dancer", "Prancer", "Vixen",
@@ -21,5 +23,6 @@ public class NorthPole
         for (String name : elfNames){
             (new Thread(new SantasFriend("Elf" + name, waitingRoom, "Elf"))).start();
         }
+        (new Thread(mrsClaus)).start();
      }
 }
