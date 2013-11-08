@@ -4,7 +4,8 @@ import Util.Data;
 import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.cpr.BroadcasterFactory;
 import org.codehaus.jackson.map.ObjectMapper;
-import java.io.IOException;
+
+import java.util.concurrent.Future;
 
 public class BroadcastOutMain {
     Broadcaster  b;
@@ -15,16 +16,11 @@ public class BroadcastOutMain {
     private final ObjectMapper mapper = new ObjectMapper();
 
     public void send(Data data)  {
-        try {
-            b.broadcast(
-                    mapper.writeValueAsString(
-                            mapper.readValue(
-                                    "{\"message\":\"" + data.getMessage() +
-                                      "\",\"who\":\"" + data.getWho() +
-                                 "\"}",
-                                    Data.class)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Future br = b.broadcast("{\"message\": " + wrapInQuotes(data) + "," +
+                "\"who\":\""+data.getWho()+"\","+
+                "\"type\":\"northPole\"}");
+    }
+    private String wrapInQuotes(Data data){
+        return ("Delivery".equals(data.getType()) ? data.getMessage() : "\"" + data.getMessage()+ "\" " );
     }
 }

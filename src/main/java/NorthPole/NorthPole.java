@@ -1,11 +1,14 @@
 package NorthPole;
 
 import Server.NettoServer;
+import WishList.WishList;
 
 public class NorthPole
 {
      public static void main (String[] args){
         NettoServer ns = new NettoServer();
+        WishList wishList = new WishList();
+        Server.NorthPole.InjectWishList.wishList = wishList;
         final SnackRoom sr = new SnackRoom();
 	    final Santa santa = new Santa(sr);
         final MrsClaus mrsClaus = new MrsClaus(sr);

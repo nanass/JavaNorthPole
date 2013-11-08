@@ -23,7 +23,12 @@ public class NorthPole {
 
     @Message
     public String onMessage(String message) throws IOException {
-        return mapper.writeValueAsString(mapper.readValue(message, Data.class));
+        Data d = mapper.readValue(message, Data.class);
+        InjectWishList.wishList.addToWishList(d);
+        return mapper.writeValueAsString(d);
     }
 
+    public static class InjectWishList{
+        public static WishList.WishList wishList;
+    }
 }

@@ -47,6 +47,7 @@ public class Santa extends NorthPoleConcurrentObject{
         log("Harnessing reindeer");
 	    es.submit(new UnitOfWork("Getting Hitched", reindeer, work));
 	    es.submit(new UnitOfWork("Delivering Toys", reindeer, work));
+        Server.NorthPole.InjectWishList.wishList.deliverGifts();
 	    es.submit(new UnitOfWork("Getting unhitched", reindeer, work));
 	    es.submit(new UnitOfWork("Release", reindeer, work));
 	    work.await();
