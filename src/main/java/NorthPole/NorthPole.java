@@ -1,8 +1,11 @@
 package NorthPole;
 
+import Server.NettoServer;
+
 public class NorthPole
 {
      public static void main (String[] args){
+        NettoServer ns = new NettoServer();
 	    final Santa santa = new Santa();
         final WaitingRoom waitingRoom = new WaitingRoom(santa, 3, "Elf");
 	    final WaitingRoom stable = new WaitingRoom(santa, 9, "Reindeer");
