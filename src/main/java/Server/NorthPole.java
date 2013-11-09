@@ -1,6 +1,7 @@
 package Server;
 
 import Util.Data;
+import Util.OutputService;
 import org.atmosphere.config.service.Get;
 import org.atmosphere.config.service.ManagedService;
 import org.atmosphere.config.service.Message;
@@ -24,11 +25,11 @@ public class NorthPole {
     @Message
     public String onMessage(String message) throws IOException {
         Data d = mapper.readValue(message, Data.class);
-        InjectWishList.wishList.addToWishList(d);
+        SendToOutput.out.send(d);
         return mapper.writeValueAsString(d);
     }
 
-    public static class InjectWishList{
-        public static WishList.WishList wishList;
+    public static class SendToOutput{
+        public static OutputService out;
     }
 }

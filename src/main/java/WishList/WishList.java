@@ -1,15 +1,21 @@
 package WishList;
 
-import Server.BroadcastOutMain;
+import Util.Command;
 import Util.Data;
+import Util.OutputService;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public final class WishList {
+public final class WishList implements Command {
 
     private static CopyOnWriteArrayList<Data> wishList = new CopyOnWriteArrayList<Data>();
-    private static BroadcastOutMain broadcast = new BroadcastOutMain();
-    public static void deliverGifts(){
+    OutputService out;
+    public WishList(OutputService out){
+        this.out = out;
+    }
+
+
+    public void deliverGifts(){
         String output = "[";
         System.out.println("Gifts for: ");
         for(Data d : wishList){
@@ -20,7 +26,7 @@ public final class WishList {
         System.out.println(output);
         Data data = new Data("all", output);
         data.setType("Delivery");
-        broadcast.send(data);
+        out.send(data);
     }
 
     public static void addToWishList(Data msg){
@@ -28,5 +34,16 @@ public final class WishList {
             wishList.add(msg);
             System.out.println(msg.getMessage());
         }
+    }
+
+    @Override
+    public void execute() {}
+
+    @Override
+    public void execute(Data data) {
+        if(data.getMessage().equals("Deliver"))
+            deliverGifts();
+        else
+            addToWishList(data);
     }
 }

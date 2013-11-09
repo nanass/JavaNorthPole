@@ -1,5 +1,8 @@
 package NorthPole;
 
+import Util.Data;
+import Util.OutputService;
+
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
@@ -11,9 +14,11 @@ public class Santa extends NorthPoleConcurrentObject{
 	private Boolean isSleeping;
     private final SnackRoom sr;
 	private final ExecutorService es = Executors.newSingleThreadExecutor();
+    private final OutputService outDeliver;
 
     public Santa(SnackRoom sr){
         super("Santa");
+        outDeliver = new OutputService("5566");
         this.sr = sr;
     }
     public void findWaitingRoom(WaitingRoom waitingRoom){
@@ -47,7 +52,7 @@ public class Santa extends NorthPoleConcurrentObject{
         log("Harnessing reindeer");
 	    es.submit(new UnitOfWork("Getting Hitched", reindeer, work));
 	    es.submit(new UnitOfWork("Delivering Toys", reindeer, work));
-        Server.NorthPole.InjectWishList.wishList.deliverGifts();
+        outDeliver.send(new Data("", "Deliver"));
 	    es.submit(new UnitOfWork("Getting unhitched", reindeer, work));
 	    es.submit(new UnitOfWork("Release", reindeer, work));
 	    work.await();
